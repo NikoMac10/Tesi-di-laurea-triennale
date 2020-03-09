@@ -1,0 +1,41 @@
+<html>
+
+<head>
+<title>Visualizzatore Proteine</title>
+<link rel="stylesheet" href="toast.css">
+</head>
+<body>
+
+	<div id="snackbar"></div>
+	
+	<form id="myform" enctype="multipart/form-data" method="post">
+		<input id="file" type="file" />
+		<span class="checkbox-wrapper">
+			<input id="Check_atoms" type="checkbox" name="value" checked/>
+			<img type="image" id="DisplayAtoms" src="img/Atoms.png" style="width: 25px; height: 25px;"/></img>
+		</span>
+		<span class="checkbox-wrapper" style="margin-left: 25px;">
+			<input id="Check_sticks" type="checkbox" name="value" />
+			<img type="image" src="img/Stick.jpg" style="width: 35px; height: 25px;"/> </img>
+		</span>
+		<span class="checkbox-wrapper" style="margin-left: 25px;">
+			<input id="Check_Secondary" type="checkbox" name="value" />
+			<img type="image" src="img/StrutturaSecondaria.jpg" style="width: 30px; height: 25px;"/> </img>
+		</span>
+		<span class="checkbox-wrapper" style="margin-left: 25px;">
+			<input id="Check_fog" type="checkbox" name="value"/>
+			<img type="image" src="img/Fog.png" style="width: 35px; height: 25px;"/> </img>
+		</span>
+	</form>
+</body>
+<script
+  src="https://code.jquery.com/jquery-3.4.1.min.js"
+  integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+  crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.min.js" crossorigin="anonymous" ></script>	
+<script src="src/Color_Radius.js"></script>
+<script src="src/OrbitControl.js"></script>
+<script src="src/Rendering.js"></script>
+<script src="src/auxiliary_functions.js"></script>
+<script src="src/JavascriptCod.js"></script>
+<script src="src/three.meshLine.js"></script>

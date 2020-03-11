@@ -79,7 +79,7 @@ function renderAllAtoms(){
 	
 	for(par in SingleGeometry){
 		
-		let material = new THREE.MeshPhongMaterial({ color: (color[par] || "#FF1493"  ), specular: "#191818", fog : true});
+		let material = new THREE.MeshLambertMaterial({ color: (color[par] || "#FF1493"  ), fog : true});
 		
 		let MergedGeometry = THREE.BufferGeometryUtils.mergeBufferGeometries( SingleGeometry[par], false);
 		ScenaAtomi1.add(new THREE.Mesh(MergedGeometry, material));
@@ -87,7 +87,7 @@ function renderAllAtoms(){
 
 	for(par in SingleGeometry2){
 		
-		let material = new THREE.MeshPhongMaterial({ color: (color[par] || "#FF1493"  ), specular: "#191818", fog : true});
+		let material = new THREE.MeshLambertMaterial({ color: (color[par] || "#FF1493"  ), fog : true});
 		
 		let MergedGeometry = THREE.BufferGeometryUtils.mergeBufferGeometries( SingleGeometry2[par], false);
 		ScenaAtomi2.add(new THREE.Mesh(MergedGeometry, material));
@@ -101,7 +101,7 @@ function renderizzaCollegamenti(){
 	
 	ScenaAtomBonds = new THREE.Scene(); 		ScenaAtomBonds.name = "collegamenti";
 	
-	var materiale_cilindro = new THREE.MeshPhongMaterial({ color: "#FF1493" ,  specular: "#191818", fog : true});
+	var materiale_cilindro = new THREE.MeshLambertMaterial({ color: "#FF1493" , fog : true});
 	var HALF_PI = Math.PI * .5;
 	
 	var SingleGeometry = [];
@@ -143,7 +143,7 @@ function renderizzaCollegamenti(){
 function renderizzaSecondary(){
 	ScenaSecondary = new THREE.Scene(); 		ScenaSecondary.name = "scenaSecondary";
 
-	var materiale_loop =  new MeshLineMaterial({ color : "#991A00",  lineWidth : 0.1});
+	var materiale_loop =  new MeshLineMaterial({ color : "#991A00",  lineWidth : 0.2});
 	var materiale_helix = new THREE.MeshPhongMaterial( { color : "#0066ff",
 		fog : true, side: THREE.DoubleSide});
 	var materiale_sheet = new THREE.MeshPhongMaterial( { color : "#00ff99",

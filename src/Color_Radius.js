@@ -32,9 +32,7 @@ var color = {
 };
 
 function getNameByColor(object, value) {
-	return Object.keys(object).find(function(key) { 
-		return object[key] === value;
-	});
+	return Object.keys(object).find(key => object[key] === value);
 }
 
 var radius = {

@@ -18,7 +18,7 @@ function collegamentoBuono(atom) {
 
 function findClosest(atomName, point) {
 	var distance = Number.MAX_SAFE_INTEGER, min;
-	Atomi.forEach(function(Atom){
+	Atomi.forEach((Atom) => {
 		if (Atom.elem != atomName)
 			return;
 		var atomDistance = Atom.pos.distanceTo(point);

@@ -38,7 +38,7 @@ function renderAllAtoms(){
 	ScenaAtomi2 = new THREE.Scene(); 		ScenaAtomi2.name = "atomi2";
 	var SingleGeometry = [],	SingleGeometry2 = [],	valScale = MOLTATOMI/ MOLTCPK;
 
-	Atomi.forEach( function(Atom){
+	Atomi.forEach( (Atom) => {
 		
 		if(Atom == "TER") return;
 	
@@ -106,7 +106,7 @@ function renderizzaCollegamenti(){
 	
 	var SingleGeometry = [];
 	
-	AtomBonds.forEach( function(Coll){
+	AtomBonds.forEach( (Coll) => {
 		
 		if(Coll.start == undefined || Coll.end == undefined){
 		    console.log("Presenza di un collegamento errato.");
@@ -239,7 +239,7 @@ function renderizzaSecondary(){
 			let endHeadPlus =  endHead + startHead/2;
 
 			let SeconVector=[];
-			Vector.forEach(	function(p)	{ SeconVector.push( p.clone() ); } );
+			Vector.forEach(	(p)	=>	SeconVector.push(p.clone()));
 
 			let firstRight = first, reverse = 0.60;
 			Vector.forEach(planeSheet);

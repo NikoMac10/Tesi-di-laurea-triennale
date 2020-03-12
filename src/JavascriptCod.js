@@ -51,15 +51,15 @@ $(document).ready(function() {
 	CheckboxSecondary = document.getElementById("Check_Secondary");
 	CheckboxFog = document.getElementById("Check_fog"); 
 
-	CheckboxAtomi.oninput = function(){
-        if(this.checked==true)
+	CheckboxAtomi.oninput = () =>{
+        if(this.activeElement.checked==true)
             Scene.add(ScenaAtomi1);
         else
             Scene.remove(Scene.getObjectByName("atomi1")); 
     };
 
-    CheckboxCollegamenti.oninput = function(){
-        if(this.checked==true){
+    CheckboxCollegamenti.oninput = () =>{
+        if(this.activeElement.checked==true){
             Scene.add(ScenaAtomBonds);
             Scene.add(ScenaAtomi2);
         }	
@@ -69,28 +69,30 @@ $(document).ready(function() {
         } 
     };
 
-    CheckboxSecondary.oninput = function(){
-        if(this.checked==true)
+    CheckboxSecondary.oninput = () =>{
+        if(this.activeElement.checked==true)
             Scene.add(ScenaSecondary);
         else
             Scene.remove(Scene.getObjectByName("scenaSecondary")); 
     };
         
-    CheckboxFog.oninput = function(){
-        if(this.checked==true)
+    CheckboxFog.oninput = () =>{
+        if(this.activeElement.checked==true)
             Scene.fog = new THREE.FogExp2("#262626", 0.02);
         else
             Scene.fog = undefined;
     };
-	
-	renderer.domElement.addEventListener("mousemove", function() { toast.className = "hide"; });
 
-    renderer.domElement.addEventListener('mousedown', function(event){
+	//window.addEventListener('resize', ()=>{renderer.setSize(window.innerWidth, window.innerHeight); }, true);
+	
+	renderer.domElement.addEventListener("mousemove", () =>  toast.className = "hide"  );
+
+    renderer.domElement.addEventListener('mousedown', (event) => {
         mouse.x = (event.offsetX / renderer.domElement.width) * 2 - 1;
         mouse.y = -(event.offsetY / renderer.domElement.height) * 2 + 1;
     });
 
-    renderer.domElement.addEventListener('mouseup', function(event){
+    renderer.domElement.addEventListener('mouseup', (event) => {
         if (mouse.x == ((event.offsetX / renderer.domElement.width) * 2 - 1) &&
             mouse.y == (-(event.offsetY / renderer.domElement.height) * 2 + 1)) {
             mouse2.x = mouse.x;
@@ -269,7 +271,7 @@ $(document).ready(function() {
 
 			
 			/////////////////////////////////////////////////////////////////////////////////
-			//CALCOLO COLLEGAMENTI  ->   (raggio1 + raggio2 + TOLLERANZA)   Simil Radix sort
+			//CALCOLO COLLEGAMENTI  ->      
 			/////////////////////////////////////////////////////////////////////////////////
 
 			let nVectX = (maxX-minX)/2;   let nVectY = (maxY-minY)/2;   let nVectZ = (maxZ-minZ)/2;
@@ -282,7 +284,7 @@ $(document).ready(function() {
 			}		
 
 			//INSERIMENTO ATOMI
-			Atomi.forEach( function(x){
+			Atomi.forEach( (x) => {
 				if(x == "TER") return;
 
 				let indeX = Math.floor(((x.pos.x) - minX)/2);
@@ -316,7 +318,7 @@ $(document).ready(function() {
 
 										if(!cont[iXs2][iYs2][iZs2]) continue;
 
-										cont[iXs2][iYs2][iZs2].forEach(function(other){
+										cont[iXs2][iYs2][iZs2].forEach((other) =>{
 											var dist = calcola_Distanza(atom, other);	
 											var raggio1 = cache[atom.elem];               //potrebbe non esserci il covalent radius del seguente atomo
 											var raggio2 = cache[other.elem];
@@ -391,7 +393,7 @@ $(document).ready(function() {
 			raycaster.setFromCamera( mouse, camera );
 			var atom, atom1, atom2;
 
-			Scene.children.forEach(function(elem){
+			Scene.children.forEach((elem) =>{
 				if			(elem.name == "atomi1") atom1 = elem;
 				else if		(elem.name == "atomi2") atom2 = elem;
 			});

@@ -356,7 +356,7 @@ $(document).ready(function() {
 						AtomBonds.push({start : Atomi[atom1 -1].pos, end : Atomi[atom4 -1].pos});
 					if(collegamentoBuono(atom5))
 						AtomBonds.push({start : Atomi[atom1 -1].pos, end : Atomi[atom5 -1].pos});
-				}catch{ console.log("Connect records not formatted correctly!")}
+				}catch(all){ console.log("Connect records not formatted correctly!")}
 				
 				occur = pdb.indexOf("CONECT");
 			}

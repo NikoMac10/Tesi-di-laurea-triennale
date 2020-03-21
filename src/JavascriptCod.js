@@ -251,7 +251,7 @@ $(document).ready(function() {
 			
 			
 			/////////////////////////////////////////////////////////////////////////////////
-			//CALCOLO COLLEGAMENTI  ->    (raggio1 + raggio2 + TOLLERANZA)   BRUTEFORCE O(n!)
+			//CALCOLO COLLEGAMENTI  ->    (raggio1 + raggio2 + TOLLERANZA)   BRUTEFORCE O(n^2)
 			/////////////////////////////////////////////////////////////////////////////////
 			/*
 			let cache = CovalentRadius;                 
@@ -271,7 +271,7 @@ $(document).ready(function() {
 
 			
 			/////////////////////////////////////////////////////////////////////////////////
-			//CALCOLO COLLEGAMENTI  ->      
+			//CALCOLO COLLEGAMENTI  ->   (raggio1 + raggio2 + TOLLERANZA)   Θ(n)
 			/////////////////////////////////////////////////////////////////////////////////
 
 			let nVectX = (maxX-minX)/2;   let nVectY = (maxY-minY)/2;   let nVectZ = (maxZ-minZ)/2;

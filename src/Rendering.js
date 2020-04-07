@@ -13,7 +13,7 @@ function renderizza() {
 	if (CheckboxCollegamenti.checked == true){ Scene.add(ScenaAtomBonds); Scene.add(ScenaAtomi2);}
 	if (CheckboxSecondary.checked == true) Scene.add(ScenaSecondary);
 
-	//fog calculation
+	//calcolo fog
 	c = maxY - minY;
 	var cos = 2-((Math.cos(FOV * Math.PI/180))*2);
 	distance = Math.sqrt((((c)/cos)*((c)/cos))- (c*c)) * 1.05;
@@ -21,9 +21,9 @@ function renderizza() {
 	if (CheckboxFog.checked == true) Scene.fog = new THREE.FogExp2("#262626", 0.02);
 	else Scene.fog = undefined;
 	
-	//orbit control and camera position
-	var appo = 	mediana.clone();
-	controls.target.set(mediana.x, mediana.y, mediana.z);
+	//orbit control e posizione camera
+	var appo = 	media.clone();
+	controls.target.set(media.x, media.y, media.z);
 	var dist = distance / appo.length();
 	var appo2 = appo.clone().multiplyScalar((dist*1.80));
 	camera.lookAt(appo);
@@ -63,7 +63,7 @@ function renderAllAtoms(){
 
 
 		//////////////////////////////////////////////////////////////
-		//BALL AND STICKS ATOMS
+		//ATOMI BALL AND STICKS 
 		//////////////////////////////////////////////////////////////
 		if(AtomPool2[Atom.elem] == undefined)
 			AtomPool2[Atom.elem] = AtomPool1[Atom.elem].clone().scale(valScale,valScale,valScale);
@@ -118,12 +118,12 @@ function renderizzaCollegamenti(){
 		
 		let cylinder = new THREE.CylinderBufferGeometry( MOLTCOLLEGAMENTI, MOLTCOLLEGAMENTI, distanza, GRAFICA );
 		
-		let orientation = new THREE.Matrix4();//a new orientation matrix to offset pivot
-		let offsetRotation = new THREE.Matrix4();//a matrix to fix pivot rotation
+		let orientation = new THREE.Matrix4();//matrice di orientamento
+		let offsetRotation = new THREE.Matrix4();//matrice di rotazione
 		
-		orientation.lookAt(Coll.start, Coll.end, new THREE.Vector3(0,1,0));//look at destination
-		offsetRotation.makeRotationX(HALF_PI);//rotate 90 degs on X
-		orientation.multiply(offsetRotation);//combine orientation with rotation transformations
+		orientation.lookAt(Coll.start, Coll.end, new THREE.Vector3(0,1,0));//look at a destinazione
+		offsetRotation.makeRotationX(HALF_PI);//ruotiamo di 90° su asse x
+		orientation.multiply(offsetRotation);//combiniamo l orientamento con la matrice di rotazione
 	
 		orientation.setPosition(divideScalar2.x, divideScalar2.y, divideScalar2.z);
 		
@@ -151,12 +151,12 @@ function renderizzaSecondary(){
 
 	var  j=0, k=0, GroupVector = new THREE.Group();
 	var SingleGeometry = [];
+	var max=0, prec=-5;
 
 
 	///////////////////////////////////////////////////////////////////////////
-	//OBTAINING HELIX, SHEET, AND LOOP CORDINATE 
+	//CALCOLO CORDINATE HELIX, SHEET, E LOOP 
 	///////////////////////////////////////////////////////////////////////////
-	//fare meccaniscmo anti loop semplice
 
 	for(var i=0; i< Backbone.length; ){
 
@@ -166,6 +166,8 @@ function renderizzaSecondary(){
 		let seq = Backbone[i].resSeq; 
 		let chainId = Backbone[i].chainId
 		let Vector = [], where;
+		max = (max>i)? max : i;
+
 
 		if(Helix[j] && seq == Helix[j].start && chainId == Helix[j].startChainId){
 			for(; Backbone[i].resSeq <= Helix[j].end; i++)
@@ -194,13 +196,18 @@ function renderizzaSecondary(){
 			i--;			where="loop";
 		}
 
-
-		//cercare di distinguere un po di casi 
-		if(Vector.length<2){	continue;	} 
+		
+		if(Vector.length<2){
+			//if per meccanismo anti loop, questo potrebbe succedre se una struttura secondaria 
+			//ha inizio o fine in un etereoatomo che in questo programma non sono presi in considerazione   
+			if(prec== i) i=max+1; 
+			else prec=i;
+			continue;	
+		} 
 
 		
 		///////////////////////////////////////////////////////////////////////////
-		//DRAW HELIX, SHEET AND LOOP
+		//DISEGNO HELIX, SHEET AND LOOP
 		///////////////////////////////////////////////////////////////////////////
 		let curve = new THREE.CatmullRomCurve3(Vector, false, "chordal", 0.1);
 		var pointsCount = Vector.length*7;
@@ -210,17 +217,17 @@ function renderizzaSecondary(){
 		
 		switch(where) {
 			case "loop":
-			  	drawLoop();
+			  	disegnaLoop();
 			  	break;
 			case "sheet":
-				drawSheet();
+				disegnaSheet();
 			  	break;
 			case "helix":
-				drawHelix();
+				disegnaHelix();
 			  	break;
 		}
 		
-		function drawLoop(){
+		function disegnaLoop(){
 
 			let loopGeom = new THREE.Geometry().setFromPoints(curve.getPoints(pointsCount));
 			var line = new MeshLine();
@@ -230,7 +237,7 @@ function renderizzaSecondary(){
 			GroupVector.add(mesh);	
 		}
 
-		function drawSheet(){
+		function disegnaSheet(){
 			pointsCount = Vector.length*17;
 			pointsCount1 = pointsCount+1;
 
@@ -267,7 +274,7 @@ function renderizzaSecondary(){
 
 
 			//////////////////////////////////////////////////////////////////////////////
-			//DRAW ARROW OF THE SHEET
+			//DISEGNO FRECCIA SHEET
 			///////////////////////////////////////////////////////////////////////////////
 			for(l = Math.floor(endHead)+1 ; l< pts.length; l++)
 				if(l> endHead && l < endHeadPlus){
@@ -291,7 +298,6 @@ function renderizzaSecondary(){
 			
 			let indices = [];
 
-			 // the idea taken from PlaneBufferGeometry
 			for (ix = 0; ix < pointsCount; ix++) {
 				var a = ix;
 				var b = ix + pointsCount1;
@@ -311,7 +317,7 @@ function renderizzaSecondary(){
 			SingleGeometry[where].push(sheetGeom);	
 		}
 		
-		function drawHelix(){
+		function disegnaHelix(){
 
 			var direction = Vector[Vector.length-1].clone().add(Vector[0].clone().multiplyScalar(-1));
 			direction.divideScalar(Vector.length*1.25);
@@ -338,7 +344,7 @@ function renderizzaSecondary(){
 			
 			let indices = [];
 
-			 // the idea taken from PlaneBufferGeometry
+			 //PlaneBufferGeometry style
 			for (ix = 0; ix < pointsCount; ix++) {
 				var a = ix;
 				var b = ix + pointsCount1;

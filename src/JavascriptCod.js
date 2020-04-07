@@ -4,11 +4,11 @@
 
 var Atomi = [], AtomBonds = [], Oxigen=[],
 	Helix = [], Sheet = [], Backbone=[];           	//strutture dati
-var AlsoConnect = [];						//CONNECT
+var AlsoConnect = [];						//connect
 var AtomPool1 = [];							//pool
 var AtomPool2 = [];
 
-var mediana, cpk_ballstick = true;
+var media, cpk_ballstick = true;
 var mouse = new THREE.Vector2();
 var mouse2 = new THREE.Vector2();
 var raycaster = new THREE.Raycaster();
@@ -17,7 +17,6 @@ var GRAFICA = 16;																//costanti
 var TOLLERANZA = 0.45;
 var MOLTATOMI = 0.22, MOLTCPK = 1.0 ,MOLTCOLLEGAMENTI = 0.150;
 var FOV = 45;
-var NATOMS = 10000;
 
 var ScenaAtomi1 = new THREE.Scene();											//Scene
 var ScenaAtomi2 = new THREE.Scene();
@@ -39,18 +38,25 @@ var CheckboxAtomi, CheckboxCollegamenti, CheckboxSecondary,
 ////////////////////////////////////////////////////////////////////////
 $(document).ready(function() {
 
+	//SETTING VARIABILI A DOCUMENTO PRONTO
 	mouse2.x=9999;
 	ScenaSecondary.name = "scenaSecondary";
 	ScenaAtomBonds.name = "collegamenti";
 	ScenaAtomi2.name = "atomi2";
 	ScenaAtomi1.name = "atomi1";
 		
+	//TOAST POPUP
 	toast = document.getElementById("snackbar");
-	CheckboxAtomi = document.getElementById("Check_atoms");  //checkbox
+	//CHECKBOX
+	CheckboxAtomi = document.getElementById("Check_atoms");  
 	CheckboxCollegamenti = document.getElementById("Check_sticks");
 	CheckboxSecondary = document.getElementById("Check_Secondary");
 	CheckboxFog = document.getElementById("Check_fog"); 
 
+
+	////////////////////////////////////////////////////////
+	//CALLBACK CHECKBOX
+	////////////////////////////////////////////////////////
 	CheckboxAtomi.oninput = () =>{
         if(this.activeElement.checked==true)
             Scene.add(ScenaAtomi1);
@@ -81,9 +87,13 @@ $(document).ready(function() {
             Scene.fog = new THREE.FogExp2("#262626", 0.02);
         else
             Scene.fog = undefined;
-    };
+	};
+	
 
-	//window.addEventListener('resize', ()=>{renderer.setSize(window.innerWidth, window.innerHeight); }, true);
+
+	/////////////////////////////////////////////////////////
+	//CALLBACK MOUSE, servono per toast popup
+	////////////////////////////////////////////////////////
 	
 	renderer.domElement.addEventListener("mousemove", () =>  toast.className = "hide"  );
 
@@ -102,26 +112,39 @@ $(document).ready(function() {
             mouse2.x = 9999;
     });
 	
-	 
-	//lettura file pdb
+
+
+	/////////////////////////////////////////////////////////
+	//LETTURA FILE PDB
+	/////////////////////////////////////////////////////////
 	document.forms['myform'].elements['file'].onchange = function(evt) {
 		if(!window.FileReader) return; // Browser is not compatible
 		
+		const name = evt.target.files[0].name;
+  		const lastDot = name.lastIndexOf('.');
+		const ext = name.substring(lastDot + 1);
+
+		if(ext != "pdb"){
+			 alert("Il file inserito non ha estensione .pdb ! \n Inserire un file con estensione .pdb");
+			 return;
+		}
+
+
 		var reader = new FileReader();
-		
+
 		reader.onload = function(evt) {
 			if(evt.target.readyState != 2) return;
 			if(evt.target.error) {
 				alert('Error while reading file');
 				return;
 			}
-			
+
 			var pdb = evt.target.result;  	//inseriamo contenuto file pdb dentro stringa
 			
 			Atomi = []; 			Backbone = [];				//reset strutture dati atomi e collegamenti
 			AtomBonds = []; 		AlsoConnect = [];		
 			Helix = [];            	Sheet = [];
-			mediana = new THREE.Vector3();
+			media = new THREE.Vector3();
 
 			//////////////////////////////////////////////////////////////////////
 			//RAGGIUNGIMENTO HELIX SHEET
@@ -220,7 +243,7 @@ $(document).ready(function() {
 				minX = (minX > pos.x)? pos.x : minX;  	maxX = (maxX < pos.x)? pos.x : maxX;
 				minZ = (minZ > pos.z)? pos.z : minZ;  	maxZ = (maxZ < pos.z)? pos.z : maxZ;
 				
-				mediana.add(pos); 	//mediana
+				media.add(pos); 	//mediana
 				
 				let atomo = {pos : pos, elem : elem, name : name,		//atomo
 					 resName : resName, chainId : chainId, resSeq : resSeq};		
@@ -247,29 +270,9 @@ $(document).ready(function() {
 			}
 			
 			console.log("Chain found : " + ter);
-			mediana.divideScalar(Atomi.length);
+			media.divideScalar(Atomi.length);
 			
-			
-			/////////////////////////////////////////////////////////////////////////////////
-			//CALCOLO COLLEGAMENTI  ->    (raggio1 + raggio2 + TOLLERANZA)   BRUTEFORCE O(n^2)
-			/////////////////////////////////////////////////////////////////////////////////
-			/*
-			let cache = CovalentRadius;                 
-			for(var i=0; i<Atomi.length; i++){			if(Atomi[i] == "TER") continue;
-				let raggio1 = cache[Atomi[i].elem];		
-				for(let j=i+1; j<Atomi.length; j++){	if(Atomi[j] == "TER") continue;
-					
-					let dist = calcola_Distanza(Atomi[i], Atomi[j]);
 
-					if( 4 > dist && dist > 0.4){
-						let raggio2 =  cache[Atomi[j].elem];
-						if(raggio1+raggio2 + TOLLERANZA > dist)   
-							AtomBonds.push({start : Atomi[i].pos, end : Atomi[j].pos });
-					}	
-				}
-			}*/
-
-			
 			/////////////////////////////////////////////////////////////////////////////////
 			//CALCOLO COLLEGAMENTI  ->   (raggio1 + raggio2 + TOLLERANZA)   Θ(n)
 			/////////////////////////////////////////////////////////////////////////////////
@@ -374,7 +377,7 @@ $(document).ready(function() {
 	//control
 	controls = new THREE.OrbitControls( camera, renderer.domElement );
 
-	//ILLUMINAZIONE 
+	//illuminazione 
 	var light = new THREE.PointLight( 0xffffff, 1.2, 1000,0 );
 	light.position.set( 0,5,0 );
 	camera.add( light );
@@ -388,7 +391,7 @@ $(document).ready(function() {
 		requestAnimationFrame( animate );
 		// required if controls.enableDamping or controls.autoRotate are set to true
 		
-		// calculate objects intersecting the picking ray
+		// algoritmo raycaster serve per conoscere atomo cliccato con mouse 
 		if(mouse2.x!=9999 && mouse2.x!=99999 ){
 			raycaster.setFromCamera( mouse, camera );
 			var atom, atom1, atom2;

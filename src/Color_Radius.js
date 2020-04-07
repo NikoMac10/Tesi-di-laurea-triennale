@@ -1,3 +1,4 @@
+//CPK color
 var color = {
 	H  : '#FFFFFF',
 	C  : '#909090',
@@ -35,6 +36,7 @@ function getNameByColor(object, value) {
 	return Object.keys(object).find(key => object[key] === value);
 }
 
+//raggi di Van Der Whaals
 var radius = {
 	H  : 1.1,
 	C  : 1.7,
@@ -62,6 +64,8 @@ var radius = {
 	As : 2.05,
 };
 
+
+//raggi Covalenti
 var CovalentRadius = {
 	H  : 0.31,
 	C  : 0.73,

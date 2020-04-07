@@ -243,7 +243,7 @@ $(document).ready(function() {
 				minX = (minX > pos.x)? pos.x : minX;  	maxX = (maxX < pos.x)? pos.x : maxX;
 				minZ = (minZ > pos.z)? pos.z : minZ;  	maxZ = (maxZ < pos.z)? pos.z : maxZ;
 				
-				media.add(pos); 	//mediana
+				media.add(pos); 	//media
 				
 				let atomo = {pos : pos, elem : elem, name : name,		//atomo
 					 resName : resName, chainId : chainId, resSeq : resSeq};		

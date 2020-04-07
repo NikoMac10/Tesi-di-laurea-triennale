@@ -9,14 +9,14 @@ function renderizza() {
 	renderizzaCollegamenti();
 	renderizzaSecondary();
 
-	if (CheckboxAtomi.checked == true) Scene.add(ScenaAtomi1);
-	if (CheckboxCollegamenti.checked == true){ Scene.add(ScenaAtomBonds); Scene.add(ScenaAtomi2);}
-	if (CheckboxSecondary.checked == true) Scene.add(ScenaSecondary);
+	if (CheckboxAtomi[0].checked == true) Scene.add(ScenaAtomi1);
+	if (CheckboxCollegamenti[0].checked == true){ Scene.add(ScenaAtomBonds); Scene.add(ScenaAtomi2);}
+	if (CheckboxSecondary[0].checked == true) Scene.add(ScenaSecondary);
 
 	//calcolo fog
-	c = maxY - minY;
+	var c = maxY - minY;
 	var cos = 2-((Math.cos(FOV * Math.PI/180))*2);
-	distance = Math.sqrt((((c)/cos)*((c)/cos))- (c*c)) * 1.05;
+	var distance = Math.sqrt((((c)/cos)*((c)/cos))- (c*c)) * 1.05;
 	
 	if (CheckboxFog.checked == true) Scene.fog = new THREE.FogExp2("#262626", 0.02);
 	else Scene.fog = undefined;
@@ -93,7 +93,7 @@ function renderAllAtoms(){
 		ScenaAtomi2.add(new THREE.Mesh(MergedGeometry, material));
 	}
 
-	console.log("Drawn atoms: " + Atomi.length );
+	console.log("Atomi disegnati: " + Atomi.length );
 }
 
 
@@ -136,7 +136,7 @@ function renderizzaCollegamenti(){
 		ScenaAtomBonds.add(new THREE.Mesh(MergedGeometry, materiale_cilindro));
 	}	
 	
-	console.log("Drawn atom bonds: " + AtomBonds.length );
+	console.log("Legami disegnati: " + AtomBonds.length );
 	
 }
 
@@ -376,7 +376,6 @@ function renderizzaSecondary(){
 
 	ScenaSecondary.add(GroupVector);
 	
-	console.log("Drawn secondary structure");
-	console.log("Drawn helix: " + j + "/" + Helix.length);	
-	console.log("Drawn sheets: " + k + "/" + Sheet.length);	
+	console.log("Alfa eliche disegnate: " + j + "/" + Helix.length);	
+	console.log("Beta sheet disegnate: " + k + "/" + Sheet.length);	
 }

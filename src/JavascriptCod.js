@@ -8,7 +8,7 @@ var AlsoConnect = [];						//connect
 var AtomPool1 = [];							//pool
 var AtomPool2 = [];
 
-var media, cpk_ballstick = true;
+var media;
 var mouse = new THREE.Vector2();
 var mouse2 = new THREE.Vector2();
 var raycaster = new THREE.Raycaster();
@@ -27,7 +27,7 @@ var Scene = new THREE.Scene();
 
 var renderer = new THREE.WebGLRenderer({antialias : true});
 var camera = new THREE.PerspectiveCamera(FOV, window.innerWidth/window.innerHeight, 0.1, 500);
-var controls, distance , c,  minY , maxY, minX , maxX, minZ , maxZ; 
+var controls, minY , maxY, minX , maxX, minZ , maxZ; 
 
 var CheckboxAtomi, CheckboxCollegamenti, CheckboxSecondary,
 	 CheckboxFog, toast;											//checkbox and button
@@ -48,50 +48,48 @@ $(document).ready(function() {
 	//TOAST POPUP
 	toast = document.getElementById("snackbar");
 	//CHECKBOX
-	CheckboxAtomi = document.getElementById("Check_atoms");  
-	CheckboxCollegamenti = document.getElementById("Check_sticks");
-	CheckboxSecondary = document.getElementById("Check_Secondary");
-	CheckboxFog = document.getElementById("Check_fog"); 
+	CheckboxAtomi = $("#Check_atoms");  
+	CheckboxCollegamenti = $("#Check_sticks");
+	CheckboxSecondary = $("#Check_Secondary");
+	CheckboxFog = $("#Check_fog"); 
 
 
 	////////////////////////////////////////////////////////
 	//CALLBACK CHECKBOX
 	////////////////////////////////////////////////////////
 
-
-	CheckboxAtomi.oninput = () =>{
-        if(this.activeElement.checked==true)
+	CheckboxAtomi.on('click', () =>{
+        if(CheckboxAtomi[0].checked==true)
             Scene.add(ScenaAtomi1);
         else
             Scene.remove(Scene.getObjectByName("atomi1")); 
-    };
-
-    CheckboxCollegamenti.oninput = () =>{
-        if(this.activeElement.checked==true){
+	});
+	
+	CheckboxCollegamenti.on('click', () =>{
+        if(CheckboxCollegamenti[0].checked==true){
             Scene.add(ScenaAtomBonds);
             Scene.add(ScenaAtomi2);
-        }	
+        }
         else{
             Scene.remove(Scene.getObjectByName("collegamenti"));
             Scene.remove(Scene.getObjectByName("atomi2"));
         } 
-    };
+    });
 
-    CheckboxSecondary.oninput = () =>{
-        if(this.activeElement.checked==true)
+	CheckboxSecondary.on('click', () =>{
+        if(CheckboxSecondary[0].checked==true)
             Scene.add(ScenaSecondary);
         else
             Scene.remove(Scene.getObjectByName("scenaSecondary")); 
-    };
+    });
         
-    CheckboxFog.oninput = () =>{
-        if(this.activeElement.checked==true)
+    CheckboxFog.on('click', () =>{
+        if(CheckboxFog[0].checked==true)
             Scene.fog = new THREE.FogExp2("#262626", 0.02);
         else
             Scene.fog = undefined;
-	};
+	});
 	
-
 
 	/////////////////////////////////////////////////////////
 	//CALLBACK MOUSE, servono per toast popup
@@ -126,7 +124,7 @@ $(document).ready(function() {
   		const lastDot = name.lastIndexOf('.');
 		const ext = name.substring(lastDot + 1);
 
-		if(ext != "pdb"){
+		if(ext != "pdb"){  //file non ha estensione pdb
 			 alert("Il file inserito non ha estensione .pdb ! \n Inserire un file con estensione .pdb");
 			 return;
 		}
@@ -163,116 +161,128 @@ $(document).ready(function() {
 			//////////////////////////////////////////////////////////////////////
 			//PARSING HELIX, SHEET
 			//////////////////////////////////////////////////////////////////////
-			var occur = pdb.indexOf("HELIX");
-			while (occur!=-1){ 
-				pdb = pdb.slice(occur+4, pdb.length);
-				let startChainId = pdb.slice(15, 16);				
-				let start = parseInt(pdb.slice(17, 21));
-				let endChainId = pdb.slice(27, 28);	
-				let end = parseInt(pdb.slice(29, 33));
+			//la fase di parsing è interamente copera da un blocco try catch in caso
+			//sorgano errori 
 
-				Helix.push({ startChainId : startChainId , start : start
-							, endChainId : endChainId , end : end});
+			try{
 
-				occur = pdb.indexOf("HELIX");				
-			}
-			Helix.sort(compareSheetHelix);
+				var occur = pdb.indexOf("HELIX");
+				while (occur!=-1){ 
+					pdb = pdb.slice(occur+4, pdb.length);
+					let startChainId = pdb.slice(15, 16);				
+					let start = parseInt(pdb.slice(17, 21));
+					let endChainId = pdb.slice(27, 28);	
+					let end = parseInt(pdb.slice(29, 33));
 
-			occur = pdb.indexOf("SHEET");
-			while (occur!=-1){ 
-				pdb = pdb.slice(occur+4, pdb.length);
-				let startChainId = pdb.slice(17, 18);					
-				let start = parseInt(pdb.slice(18, 22));
-				let endChainId = pdb.slice(28, 29);  			
-				let end = parseInt(pdb.slice(29, 33));
+					Helix.push({ startChainId : startChainId , start : start
+								, endChainId : endChainId , end : end});
 
-				Sheet.push({ startChainId : startChainId , start : start
-							, endChainId : endChainId , end : end});
+					occur = pdb.indexOf("HELIX");				
+				}
+				Helix.sort(compareSheetHelix);
 
-				occur = pdb.indexOf("SHEET");				
-			}
+				occur = pdb.indexOf("SHEET");
+				while (occur!=-1){ 
+					pdb = pdb.slice(occur+4, pdb.length);
+					let startChainId = pdb.slice(17, 18);					
+					let start = parseInt(pdb.slice(18, 22));
+					let endChainId = pdb.slice(28, 29);  			
+					let end = parseInt(pdb.slice(29, 33));
 
-			Sheet.sort(compareSheetHelix);								//reorder
-			Sheet = Sheet.filter(checkDuplicates);					//remove duplicates
-			
-			
-			//////////////////////////////////////////////////////////////////////
-			//RAGGIUNGIMENTO ATOMI
-			////////////////////////////////////////////////////////////////////////
-			var appo = pdb.indexOf("SITE");
-			if(appo != -1) pdb = pdb.slice(appo, pdb.length);
-			appo = pdb.indexOf("CRYST1");
-			if(appo != -1) pdb = pdb.slice(appo, pdb.length);
-			appo = pdb.indexOf("ORIGX1");
-			if(appo != -1) pdb = pdb.slice(appo, pdb.length);
-			appo = pdb.indexOf("SCALE1");
-			if(appo != -1) pdb = pdb.slice(appo, pdb.length);
-			appo = pdb.indexOf("MTRIX1");
-			if(appo != -1) pdb = pdb.slice(appo, pdb.length);
-			
-			
-			//////////////////////////////////////////////////////////////////////
-			//PARSING ATOMI
-			////////////////////////////////////////////////////////////////////////
-			if(pdb.indexOf("MODEL") != -1){ 	//prendo in considerazione il primo modello
-				pdb = pdb.slice(pdb.indexOf("MODEL"), pdb.indexOf("ENDMDL"));  
-				console.log("Proteina multi modello");
-			}
+					Sheet.push({ startChainId : startChainId , start : start
+								, endChainId : endChainId , end : end});
+
+					occur = pdb.indexOf("SHEET");				
+				}
+
+				Sheet.sort(compareSheetHelix);							//riordino
+				Sheet = Sheet.filter(checkDuplicates);					//rimuovo duplicati
+
 				
-			minY = 1000; 	maxY = -1000;
-			minX = 1000; 	maxX = -1000;
-			minZ = 1000; 	maxZ = -1000;
-			          					
-			occur = pdb.indexOf("ATOM");  
-			var occur2 =  Number.MAX_SAFE_INTEGER;
-			var i=0, ter=1;
+				//////////////////////////////////////////////////////////////////////
+				//RAGGIUNGIMENTO ATOMI
+				////////////////////////////////////////////////////////////////////////
+				appo = pdb.indexOf("SITE");
+				if(appo != -1) pdb = pdb.slice(appo, pdb.length);
+				appo = pdb.indexOf("CRYST1");
+				if(appo != -1) pdb = pdb.slice(appo, pdb.length);
+				appo = pdb.indexOf("ORIGX1");
+				if(appo != -1) pdb = pdb.slice(appo, pdb.length);
+				appo = pdb.indexOf("SCALE1");
+				if(appo != -1) pdb = pdb.slice(appo, pdb.length);
+				appo = pdb.indexOf("MTRIX1");
+				if(appo != -1) pdb = pdb.slice(appo, pdb.length);
+				
+				
+				//////////////////////////////////////////////////////////////////////
+				//PARSING ATOMI
+				////////////////////////////////////////////////////////////////////////
+				if(pdb.indexOf("MODEL") != -1){ 	//prendo in considerazione il primo modello
+					pdb = pdb.slice(pdb.indexOf("MODEL"), pdb.indexOf("ENDMDL"));  
+					console.log("Proteina multi modello");
+				}
+					
+				minY = 1000; 	maxY = -1000;
+				minX = 1000; 	maxX = -1000;
+				minZ = 1000; 	maxZ = -1000;
+											
+				occur = pdb.indexOf("ATOM");  
+				var occur2 =  Number.MAX_SAFE_INTEGER;
+				var ter=1;
 		
-			while (occur!=-1){ 
-				pdb = pdb.slice(occur+4, pdb.length);				
-				
-				let name = pdb.slice(8, 12).trim(); 
-				let resName = pdb.slice(13, 16);
-				let chainId = pdb.slice(17, 18);
-				let resSeq = parseInt(pdb.slice(18,22));
-				let pos = new THREE.Vector3(parseFloat(pdb.slice(26, 34)),  			//cordinate 
-											parseFloat(pdb.slice(34, 42)),
-											parseFloat(pdb.slice(42, 50)));						
-				let elem = pdb.slice(72, 74).trim();
-				
-
-				//variabili per settare zoom e per calcolo collegamenti
-				minY = (minY > pos.y)? pos.y : minY; 	maxY = (maxY < pos.y)? pos.y : maxY; 
-				minX = (minX > pos.x)? pos.x : minX;  	maxX = (maxX < pos.x)? pos.x : maxX;
-				minZ = (minZ > pos.z)? pos.z : minZ;  	maxZ = (maxZ < pos.z)? pos.z : maxZ;
-				
-				media.add(pos); 	//media
-				
-				let atomo = {pos : pos, elem : elem, name : name,		//atomo
-					 resName : resName, chainId : chainId, resSeq : resSeq};		
-
-				Atomi.push(atomo);
-
-				if(name == "C")  Backbone.push(atomo);
-				if(name == "O")  Oxigen[chainId.toString() + resSeq.toString() ] = pos;
-
-				//TER
-				{
-				occur = pdb.indexOf("ATOM");
-				if(occur > 100 || occur == -1) 					//ottimizzazione TER
-					occur2 = pdb.indexOf('TER');
-				
-				if(occur==-1 && occur2!=-1){              			//caso atomi finiti e TER finale   
-					Atomi.push("TER");		ter++;		Backbone.push("TER");						
-				}
-
-				if(occur2 < occur && occur2!=-1 && occur!=-1){		//caso fine catena                   
-					Atomi.push("TER");		ter++;		Backbone.push("TER");						
-				}
-				}
-			}
 			
-			console.log("Chain found : " + ter);
-			media.divideScalar(Atomi.length);
+				while (occur!=-1){ 
+					pdb = pdb.slice(occur+4, pdb.length);				
+					
+					let name = pdb.slice(8, 12).trim(); 
+					let resName = pdb.slice(13, 16);
+					let chainId = pdb.slice(17, 18);
+					let resSeq = parseInt(pdb.slice(18,22));
+					let pos = new THREE.Vector3(parseFloat(pdb.slice(26, 34)),  			//cordinate 
+												parseFloat(pdb.slice(34, 42)),
+												parseFloat(pdb.slice(42, 50)));						
+					let elem = pdb.slice(72, 74).trim();
+					
+
+					//variabili per settare zoom e per calcolo collegamenti
+					minY = (minY > pos.y)? pos.y : minY; 	maxY = (maxY < pos.y)? pos.y : maxY; 
+					minX = (minX > pos.x)? pos.x : minX;  	maxX = (maxX < pos.x)? pos.x : maxX;
+					minZ = (minZ > pos.z)? pos.z : minZ;  	maxZ = (maxZ < pos.z)? pos.z : maxZ;
+					
+					media.add(pos); 	//media
+					
+					let atomo = {pos : pos, elem : elem, name : name,		//atomo
+						resName : resName, chainId : chainId, resSeq : resSeq};		
+
+					Atomi.push(atomo);
+
+					if(name == "C")  Backbone.push(atomo);
+					if(name == "O")  Oxigen[chainId.toString() + resSeq.toString() ] = pos;
+
+					//TER
+					{
+					occur = pdb.indexOf("ATOM");
+					if(occur > 100 || occur == -1) 					//ottimizzazione TER
+						occur2 = pdb.indexOf('TER');
+					
+					if(occur==-1 && occur2!=-1){              			//caso atomi finiti e TER finale   
+						Atomi.push("TER");		ter++;		Backbone.push("TER");						
+					}
+
+					if(occur2 < occur && occur2!=-1 && occur!=-1){		//caso fine catena                   
+						Atomi.push("TER");		ter++;		Backbone.push("TER");						
+					}
+					}
+				}
+
+				console.log("Catene trovate : " + ter);
+				media.divideScalar(Atomi.length);
+
+			}catch(all){  
+				console.log("Errore fase parsing: " + all.message );
+				alert("Errore fase parsing: " + all.message );
+				return;
+			}
 			
 
 			/////////////////////////////////////////////////////////////////////////////////
@@ -288,7 +298,7 @@ $(document).ready(function() {
 					cont[i][j] = new Array();
 			}		
 
-			//INSERIMENTO ATOMI
+			//INSERIMENTO ATOMI NELLA MATRICE POSIZIONALE
 			Atomi.forEach( (x) => {
 				if(x == "TER") return;
 
@@ -325,8 +335,8 @@ $(document).ready(function() {
 
 										cont[iXs2][iYs2][iZs2].forEach((other) =>{
 											var dist = calcola_Distanza(atom, other);	
-											var raggio1 = cache[atom.elem];               //potrebbe non esserci il covalent radius del seguente atomo
-											var raggio2 = cache[other.elem];
+											var raggio1 = (cache[atom.elem])? cache[atom.elem] : 1.04 ;         
+											var raggio2 = (cache[other.elem])? cache[atom.elem] : 1.04 ;
 											
 											if(raggio1+raggio2 + TOLLERANZA > dist)   
 												AtomBonds.push({start : atom.pos, end : other.pos });
@@ -335,7 +345,7 @@ $(document).ready(function() {
 						}
 					}
 			
-			cont.splice(0,cont.length);
+			cont.splice(0,cont.length); //viene svuotato il vettore posizionale
 
 			//////////////////////////////////////////////////////////////////////
 			//PARSING COLLEGAMENTI FORZATI
@@ -361,11 +371,11 @@ $(document).ready(function() {
 						AtomBonds.push({start : Atomi[atom1 -1].pos, end : Atomi[atom4 -1].pos});
 					if(collegamentoBuono(atom5))
 						AtomBonds.push({start : Atomi[atom1 -1].pos, end : Atomi[atom5 -1].pos});
-				}catch(all){ console.log("Connect records not formatted correctly!")}
+				}catch(all){ console.log("Record CONNECT non formattati correttamente.")}
 				
 				occur = pdb.indexOf("CONECT");
 			}
-			
+			requestAnimationFrame( animate );
 			renderizza();
 		};
 		reader.readAsText(evt.target.files[0]);
@@ -387,11 +397,8 @@ $(document).ready(function() {
 	Scene.add( light );
 	Scene.add( camera );
 	
-	requestAnimationFrame( animate );
-	
 	function animate() {
 		requestAnimationFrame( animate );
-		// required if controls.enableDamping or controls.autoRotate are set to true
 		
 		// algoritmo raycaster serve per conoscere atomo cliccato con mouse 
 		if(mouse2.x!=9999 && mouse2.x!=99999 ){
@@ -414,12 +421,11 @@ $(document).ready(function() {
 					atom = findClosest(atomName, intersects[0].point);
 				}
 			}
-			showToast(atom);
 
+			showToast(atom);
 			mouse2.x=9999;
 		}
 
-		
 		controls.update();
 		renderer.render( Scene, camera );	
 	}	

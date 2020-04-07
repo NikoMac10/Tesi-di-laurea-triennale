@@ -92,5 +92,3 @@ var CovalentRadius = {
 	Al : 1.21,
 	As : 1.19,
 };
-
-

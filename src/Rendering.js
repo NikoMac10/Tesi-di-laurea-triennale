@@ -198,9 +198,9 @@ function renderizzaSecondary(){
 
 		
 		if(Vector.length<2){
-			//if per meccanismo anti loop, questo potrebbe succedre se una struttura secondaria 
+			//if per meccanismo anti loop, questo potrebbe succedere quando struttura secondaria 
 			//ha inizio o fine in un etereoatomo che in questo programma non sono presi in considerazione   
-			if(prec== i) i=max+1; 
+			if(prec == i) i=max+1; 
 			else prec=i;
 			continue;	
 		} 

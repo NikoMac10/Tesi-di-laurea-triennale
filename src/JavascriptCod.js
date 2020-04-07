@@ -57,6 +57,8 @@ $(document).ready(function() {
 	////////////////////////////////////////////////////////
 	//CALLBACK CHECKBOX
 	////////////////////////////////////////////////////////
+
+
 	CheckboxAtomi.oninput = () =>{
         if(this.activeElement.checked==true)
             Scene.add(ScenaAtomi1);

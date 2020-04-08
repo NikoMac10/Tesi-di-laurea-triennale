@@ -27,7 +27,7 @@ var Scene = new THREE.Scene();
 
 var renderer = new THREE.WebGLRenderer({antialias : true});
 var camera = new THREE.PerspectiveCamera(FOV, window.innerWidth/window.innerHeight, 0.1, 500);
-var controls, minY , maxY, minX , maxX, minZ , maxZ; 
+var controls, ter, disengaRibbon , minY , maxY, minX , maxX, minZ , maxZ; 
 
 var CheckboxAtomi, CheckboxCollegamenti, CheckboxSecondary,
 	 CheckboxFog, toast;											//checkbox and button
@@ -135,7 +135,7 @@ $(document).ready(function() {
 		reader.onload = function(evt) {
 			if(evt.target.readyState != 2) return;
 			if(evt.target.error) {
-				alert('Error while reading file');
+				alert('Errore nella lettura del file');
 				return;
 			}
 
@@ -144,7 +144,7 @@ $(document).ready(function() {
 			Atomi = []; 			Backbone = [];				//reset strutture dati atomi e collegamenti
 			AtomBonds = []; 		AlsoConnect = [];		
 			Helix = [];            	Sheet = [];
-			media = new THREE.Vector3();
+			media = new THREE.Vector3();	ter=0,	disengaRibbon=true;
 
 			//////////////////////////////////////////////////////////////////////
 			//RAGGIUNGIMENTO HELIX SHEET
@@ -227,13 +227,12 @@ $(document).ready(function() {
 				minZ = 1000; 	maxZ = -1000;
 											
 				occur = pdb.indexOf("ATOM");  
-				var occur2 =  Number.MAX_SAFE_INTEGER;
-				var ter=1;
-		
+				var occur2 =  Number.MAX_SAFE_INTEGER, chainIdPrec;
 			
 				while (occur!=-1){ 
 					pdb = pdb.slice(occur+4, pdb.length);				
 					
+					//parsing caratteristiche atomo
 					let name = pdb.slice(8, 12).trim(); 
 					let resName = pdb.slice(13, 16);
 					let chainId = pdb.slice(17, 18);
@@ -243,6 +242,19 @@ $(document).ready(function() {
 												parseFloat(pdb.slice(42, 50)));						
 					let elem = pdb.slice(72, 74).trim();
 					
+					//controllo che gli atomi sia ordinati in modo lessicografico in base al campo chainID
+					if(chainIdPrec>chainId && disengaRibbon){
+						alert('Atomi non ordinati in modo lessicografico in base alcampo \"chainID\"!' +
+						'\n La struttura secondaria della proteina non verrà disegnata');
+
+						console.log('Atomi non ordinati in modo lessicografico in base alcampo \"chainID\"!' +
+						' La struttura secondaria della proteina non verrà disegnata');
+
+						disengaRibbon=false;
+						
+					}
+					chainIdPrec=chainId;
+
 
 					//variabili per settare zoom e per calcolo collegamenti
 					minY = (minY > pos.y)? pos.y : minY; 	maxY = (maxY < pos.y)? pos.y : maxY; 
@@ -275,7 +287,7 @@ $(document).ready(function() {
 					}
 				}
 
-				console.log("Catene trovate : " + ter);
+				console.log("Catene polipeptidiche trovate : " + ter);
 				media.divideScalar(Atomi.length);
 
 			}catch(all){  
@@ -375,7 +387,6 @@ $(document).ready(function() {
 				
 				occur = pdb.indexOf("CONECT");
 			}
-			requestAnimationFrame( animate );
 			renderizza();
 		};
 		reader.readAsText(evt.target.files[0]);
@@ -396,6 +407,8 @@ $(document).ready(function() {
 	light = new THREE.AmbientLight( 0x404040, 0.5 ); // soft white light
 	Scene.add( light );
 	Scene.add( camera );
+
+	requestAnimationFrame( animate );
 	
 	function animate() {
 		requestAnimationFrame( animate );

@@ -7,7 +7,8 @@ function renderizza() {
 	
 	renderAllAtoms();
 	renderizzaCollegamenti();
-	renderizzaSecondary();
+	if(disengaRibbon) renderizzaSecondary();   	
+	else{ScenaSecondary = new THREE.Scene(); 		ScenaSecondary.name = "scenaSecondary";}
 
 	if (CheckboxAtomi[0].checked == true) Scene.add(ScenaAtomi1);
 	if (CheckboxCollegamenti[0].checked == true){ Scene.add(ScenaAtomBonds); Scene.add(ScenaAtomi2);}
@@ -93,7 +94,7 @@ function renderAllAtoms(){
 		ScenaAtomi2.add(new THREE.Mesh(MergedGeometry, material));
 	}
 
-	console.log("Atomi disegnati: " + Atomi.length );
+	console.log("Atomi disegnati: " + (Atomi.length - ter) );
 }
 
 

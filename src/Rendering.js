@@ -1,5 +1,6 @@
 function renderizza() {
 	
+	//vengono rimosse le scene della proteina precedente
 	Scene.remove(Scene.getObjectByName("atomi1"));
 	Scene.remove(Scene.getObjectByName("atomi2"));
 	Scene.remove(Scene.getObjectByName("collegamenti")); 
@@ -8,7 +9,10 @@ function renderizza() {
 	renderAllAtoms();
 	renderizzaCollegamenti();
 	if(disengaRibbon) renderizzaSecondary();   	
-	else{ScenaSecondary = new THREE.Scene(); 		ScenaSecondary.name = "scenaSecondary";}
+	else{
+		ScenaSecondary = new THREE.Scene(); 		
+		ScenaSecondary.name = "scenaSecondary";
+	}
 
 	if (CheckboxAtomi[0].checked == true) Scene.add(ScenaAtomi1);
 	if (CheckboxCollegamenti[0].checked == true){ Scene.add(ScenaAtomBonds); Scene.add(ScenaAtomi2);}
@@ -35,9 +39,13 @@ function renderizza() {
 
 function renderAllAtoms(){ 
 
+	//scena CPK
 	ScenaAtomi1 = new THREE.Scene(); 		ScenaAtomi1.name = "atomi1";
+	//scena ball and stick
 	ScenaAtomi2 = new THREE.Scene(); 		ScenaAtomi2.name = "atomi2";
-	var SingleGeometry = [],	SingleGeometry2 = [],	valScale = MOLTATOMI/ MOLTCPK;
+	//variabili contenenti l'unione di tutte le buffergeometry
+	var SingleGeometry = [],	SingleGeometry2 = [],	
+	valScale = MOLTATOMI/ MOLTCPK;
 
 	Atomi.forEach( (Atom) => {
 		
@@ -138,20 +146,24 @@ function renderizzaCollegamenti(){
 	}	
 	
 	console.log("Legami disegnati: " + AtomBonds.length );
-	
 }
+
 
 function renderizzaSecondary(){
 	ScenaSecondary = new THREE.Scene(); 		ScenaSecondary.name = "scenaSecondary";
 
+	//materiali
 	var materiale_loop =  new MeshLineMaterial({ color : "#991A00",  lineWidth : 0.2});
 	var materiale_helix = new THREE.MeshPhongMaterial( { color : "#0066ff",
 		fog : true, side: THREE.DoubleSide});
 	var materiale_sheet = new THREE.MeshPhongMaterial( { color : "#00ff99",
 	 	fog : true, side: THREE.DoubleSide});
 
-	var  j=0, k=0, GroupVector = new THREE.Group();
-	var SingleGeometry = [];
+	
+	// rispettivamente, indice for, indice helix, indice sheet
+	var  i=0, j=0, k=0, 
+	GroupVector = new THREE.Group();    //contenitore THREE.meshline -> loop
+	var SingleGeometry = [];			//contenitore bufferGeometry -> sheet, helix
 	var max=0, prec=-5;
 
 
@@ -159,7 +171,7 @@ function renderizzaSecondary(){
 	//CALCOLO CORDINATE HELIX, SHEET, E LOOP 
 	///////////////////////////////////////////////////////////////////////////
 
-	for(var i=0; i< Backbone.length; ){
+	while(i< Backbone.length){
 
 		if(Backbone[i]=="TER") {i++; continue;}
 
@@ -300,10 +312,10 @@ function renderizzaSecondary(){
 			let indices = [];
 
 			for (ix = 0; ix < pointsCount; ix++) {
-				var a = ix;
-				var b = ix + pointsCount1;
-				var c = (ix + 1) + pointsCount1;
-				var d = (ix + 1);
+				let a = ix;
+				let b = ix + pointsCount1;
+				let c = (ix + 1) + pointsCount1;
+				let d = (ix + 1);
 				// faces
 				indices.push(a, b, d);
 				indices.push(b, c, d);
@@ -347,10 +359,10 @@ function renderizzaSecondary(){
 
 			 //PlaneBufferGeometry style
 			for (ix = 0; ix < pointsCount; ix++) {
-				var a = ix;
-				var b = ix + pointsCount1;
-				var c = (ix + 1) + pointsCount1;
-				var d = (ix + 1);
+				let a = ix;
+				let b = ix + pointsCount1;
+				let c = (ix + 1) + pointsCount1;
+				let d = (ix + 1);
 				// faces
 				indices.push(a, b, d);
 				indices.push(b, c, d);

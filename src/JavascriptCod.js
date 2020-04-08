@@ -13,10 +13,10 @@ var mouse = new THREE.Vector2();
 var mouse2 = new THREE.Vector2();
 var raycaster = new THREE.Raycaster();
 
-var GRAFICA = 16;																//costanti
-var TOLLERANZA = 0.45;
-var MOLTATOMI = 0.22, MOLTCPK = 1.0 ,MOLTCOLLEGAMENTI = 0.150;
-var FOV = 45;
+const GRAFICA = 16;																//costanti
+const TOLLERANZA = 0.45;
+const MOLTATOMI = 0.22, MOLTCPK = 1.0 ,MOLTCOLLEGAMENTI = 0.150;
+const FOV = 45;
 
 var ScenaAtomi1 = new THREE.Scene();											//Scene
 var ScenaAtomi2 = new THREE.Scene();
@@ -113,7 +113,6 @@ $(document).ready(function() {
     });
 	
 
-
 	/////////////////////////////////////////////////////////
 	//LETTURA FILE PDB
 	/////////////////////////////////////////////////////////
@@ -129,7 +128,6 @@ $(document).ready(function() {
 			 return;
 		}
 
-
 		var reader = new FileReader();
 
 		reader.onload = function(evt) {
@@ -140,8 +138,10 @@ $(document).ready(function() {
 			}
 
 			var pdb = evt.target.result;  	//inseriamo contenuto file pdb dentro stringa
-			
-			Atomi = []; 			Backbone = [];				//reset strutture dati atomi e collegamenti
+
+
+			//reset strutture dati atomi e collegamenti
+			Atomi = []; 			Backbone = [];				
 			AtomBonds = []; 		AlsoConnect = [];		
 			Helix = [];            	Sheet = [];
 			media = new THREE.Vector3();	ter=0,	disengaRibbon=true;
@@ -251,7 +251,6 @@ $(document).ready(function() {
 						' La struttura secondaria della proteina non verrà disegnata');
 
 						disengaRibbon=false;
-						
 					}
 					chainIdPrec=chainId;
 
@@ -330,14 +329,14 @@ $(document).ready(function() {
 					for(k=0; k<nVectZ; k++){
 						if(!cont[i][j][k]) continue;
 
-						var original_length = cont[i][j][k].length;
-						for(var l=0; l<original_length;	l++){
+						let original_length = cont[i][j][k].length;
+						for(l=0; l<original_length;	l++){
 
-							var atom = cont[i][j][k].pop();
+							let atom = cont[i][j][k].pop();
 
-							var iXs = (i -1 < 0)? 0 : i -1;
-							var iYs = (j -1 < 0)? 0 : j -1;
-							var iZs = (k -1 < 0)? 0 : k -1;
+							let iXs = (i -1 < 0)? 0 : i -1;
+							let iYs = (j -1 < 0)? 0 : j -1;
+							let iZs = (k -1 < 0)? 0 : k -1;
 
 							for(iXs2 = iXs; (iXs2 < i+2) && (iXs2 < nVectX);  iXs2++ )
 								for(iYs2 = iYs ; (iYs2 < j+2) && (iYs2 < nVectY);  iYs2++ )
@@ -346,9 +345,9 @@ $(document).ready(function() {
 										if(!cont[iXs2][iYs2][iZs2]) continue;
 
 										cont[iXs2][iYs2][iZs2].forEach((other) =>{
-											var dist = calcola_Distanza(atom, other);	
-											var raggio1 = (cache[atom.elem])? cache[atom.elem] : 1.04 ;         
-											var raggio2 = (cache[other.elem])? cache[atom.elem] : 1.04 ;
+											let dist = calcola_Distanza(atom, other);	
+											let raggio1 = (cache[atom.elem])? cache[atom.elem] : 1.04 ;         
+											let raggio2 = (cache[other.elem])? cache[atom.elem] : 1.04 ;
 											
 											if(raggio1+raggio2 + TOLLERANZA > dist)   
 												AtomBonds.push({start : atom.pos, end : other.pos });
@@ -443,5 +442,3 @@ $(document).ready(function() {
 		renderer.render( Scene, camera );	
 	}	
 });
-
-

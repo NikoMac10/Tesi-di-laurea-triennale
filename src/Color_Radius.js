@@ -32,6 +32,7 @@ var color = {
 	Fe : '#E06633',
 };
 
+//funzione inversa: per ricevere nome elemento sapendo colore 
 function getNameByColor(object, value) {
 	return Object.keys(object).find(key => object[key] === value);
 }

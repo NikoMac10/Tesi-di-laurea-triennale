@@ -63,6 +63,3 @@ function checkDuplicates(a, b, array) {
 	}
 	return duplicate;
 }
-
-
-

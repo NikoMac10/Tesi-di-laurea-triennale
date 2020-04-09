@@ -244,12 +244,12 @@ $(document).ready(function() {
 					
 					//controllo che gli atomi sia ordinati in modo lessicografico in base al campo chainID
 					if(chainIdPrec>chainId && disengaRibbon){
-						alert('Atomi non ordinati in modo lessicografico in base alcampo \"chainID\"!' +
-						'\n La struttura secondaria della proteina non verrà disegnata');
-
-						console.log('Atomi non ordinati in modo lessicografico in base alcampo \"chainID\"!' +
-						' La struttura secondaria della proteina non verrà disegnata');
-
+						let string = 'Atomi non ordinati in modo lessicografico' + 
+						' in base alcampo \"chainID\"! \n La struttura '  + 
+						'secondaria della proteina non verra\' disegnata';
+						
+						alert(string);
+						console.log(string);
 						disengaRibbon=false;
 					}
 					chainIdPrec=chainId;
@@ -267,7 +267,11 @@ $(document).ready(function() {
 
 					Atomi.push(atomo);
 
+					//vengono memorizzati tutti gli atomi con nome 'C'
+					//che compongono la backbone della proteina
 					if(name == "C")  Backbone.push(atomo);
+					//vengono memorizzati tutti gli atomi con nome 'O' 
+					// questo è necessario per disegnare le beta sheet.
 					if(name == "O")  Oxigen[chainId.toString() + resSeq.toString() ] = pos;
 
 					//TER

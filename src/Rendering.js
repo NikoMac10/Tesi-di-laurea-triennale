@@ -130,7 +130,7 @@ function renderizzaCollegamenti(){
 		let orientation = new THREE.Matrix4();//matrice di orientamento
 		let offsetRotation = new THREE.Matrix4();//matrice di rotazione
 		
-		orientation.lookAt(Coll.start, Coll.end, new THREE.Vector3(0,1,0));//look at a destinazione
+		orientation.lookAt(Coll.start, Coll.end, new THREE.Vector3(0,1,0));//guarda a destinazione
 		offsetRotation.makeRotationX(HALF_PI);//ruotiamo di 90° su asse x
 		orientation.multiply(offsetRotation);//combiniamo l orientamento con la matrice di rotazione
 	
@@ -195,23 +195,23 @@ function renderizzaSecondary(){
 			k++; 	i--; 	where="sheet";
 		}
 		else{
-			for(;	(Sheet[k]==undefined || !(Backbone[i].resSeq == (Sheet[k].start+1)  &&
-					Backbone[i].chainId == Sheet[k].startChainId)) 						&& 
-					(Helix[j]==undefined || !(Backbone[i].resSeq == (Helix[j].start+1)	&&
-					Backbone[i].chainId == Helix[j].startChainId)); 					i++){
+			for(;(Sheet[k]==undefined || !(Backbone[i].resSeq == (Sheet[k].start+1)  &&
+				Backbone[i].chainId == Sheet[k].startChainId)) 						&& 
+				(Helix[j]==undefined || !(Backbone[i].resSeq == (Helix[j].start+1)	&&
+				Backbone[i].chainId == Helix[j].startChainId));  i++){
 
-						if(Backbone[i] != "TER")
-							Vector.push(Backbone[i].pos.clone());
+				if(Backbone[i] != "TER")
+					Vector.push(Backbone[i].pos.clone());
 
-						else {i=i+2;	break;}
-					}
+				else {	i=i+2;		break;	}
+			}
 			
 			i--;			where="loop";
 		}
 
 		
 		if(Vector.length<2){
-			//if per meccanismo anti loop, questo potrebbe succedere quando struttura secondaria 
+			//if per meccanismo anti loop, questo potrebbe succedere quando la struttura secondaria 
 			//ha inizio o fine in un etereoatomo che in questo programma non sono presi in considerazione   
 			if(prec == i) i=max+1; 
 			else prec=i;

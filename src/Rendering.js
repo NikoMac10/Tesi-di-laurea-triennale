@@ -154,7 +154,7 @@ function renderizzaSecondary(){
 
 	//materiali
 	var materiale_loop =  new MeshLineMaterial({ color : "#f8f8f8",  lineWidth : 0.3});
-	var materiale_helix = new THREE.MeshPhongMaterial( { color : "#0066ff",
+	var materiale_helix = new THREE.MeshPhongMaterial( { color : "#CD0F0F",
 		fog : true, side: THREE.DoubleSide});
 	var materiale_sheet = new THREE.MeshPhongMaterial( { color : "#00ff99",
 	 	fog : true, side: THREE.DoubleSide});
@@ -333,7 +333,7 @@ function renderizzaSecondary(){
 		function disegnaHelix(){
 
 			var direction = Vector[Vector.length-1].clone().add(Vector[0].clone().multiplyScalar(-1));
-			direction.divideScalar(Vector.length*1.15);
+			direction.divideScalar(Vector.length*0.95);
 
 			let pts = curve.getPoints(pointsCount);
 			let pts2 = curve.getPoints(pointsCount);

@@ -153,7 +153,7 @@ function renderizzaSecondary(){
 	ScenaSecondary = new THREE.Scene(); 		ScenaSecondary.name = "scenaSecondary";
 
 	//materiali
-	var materiale_loop =  new MeshLineMaterial({ color : "#991A00",  lineWidth : 0.2});
+	var materiale_loop =  new MeshLineMaterial({ color : "#f8f8f8",  lineWidth : 0.3});
 	var materiale_helix = new THREE.MeshPhongMaterial( { color : "#0066ff",
 		fog : true, side: THREE.DoubleSide});
 	var materiale_sheet = new THREE.MeshPhongMaterial( { color : "#00ff99",
@@ -254,14 +254,14 @@ function renderizzaSecondary(){
 			pointsCount = Vector.length*17;
 			pointsCount1 = pointsCount+1;
 
-			startHead /= 1.0;
+			//startHead /= 1.0;
 			endHead = pointsCount-startHead;
 			let endHeadPlus =  endHead + startHead/2;
 
 			let SeconVector=[];
 			Vector.forEach(	(p)	=>	SeconVector.push(p.clone()));
 
-			let firstRight = first, reverse = 0.60;
+			let firstRight = first, reverse = 1.00;
 			Vector.forEach(planeSheet);
 
 			firstRight = first, reverse = -reverse;
@@ -333,7 +333,7 @@ function renderizzaSecondary(){
 		function disegnaHelix(){
 
 			var direction = Vector[Vector.length-1].clone().add(Vector[0].clone().multiplyScalar(-1));
-			direction.divideScalar(Vector.length*1.25);
+			direction.divideScalar(Vector.length*1.15);
 
 			let pts = curve.getPoints(pointsCount);
 			let pts2 = curve.getPoints(pointsCount);

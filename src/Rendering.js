@@ -261,7 +261,10 @@ function renderizzaSecondary(){
 			let SeconVector=[];
 			Vector.forEach(	(p)	=>	SeconVector.push(p.clone()));
 
-			let firstRight = first, reverse = 1.00;
+			let firstRight = first;
+
+			//PARAMETRO LARGHEZZA SHEET
+			let reverse = 1.1;                          
 			Vector.forEach(planeSheet);
 
 			firstRight = first, reverse = -reverse;

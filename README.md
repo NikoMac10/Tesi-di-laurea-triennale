@@ -3,7 +3,9 @@
 Questa repository contiene il codice sorgente e la tesi di laurea triennale 
 di Nicolas Pietro Martignon (870034).
 
-Abstract
+
+Abstract:
+
 Argomento di questa tesi è la visualizzazione tridimensionale della struttura dell e
 proteine. La tesi h a comp ortato lo svilupp o di una parte prettamente teorica seguita
 dallo svilup p o di un applicativo software. In particolare, nella prima parte vengono
